@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Notifications;
 
+use App\BroadCastNotifications\SendNotification;
 use App\Events\SendNotificationEvent;
 use App\Models\Event;
 use App\Models\User;
@@ -31,16 +32,23 @@ class EventReminders extends Component
     }
 
     /**
+     * 
      * @param string $id
-     * @return void
+     * @return \Livewire\Features\SupportEvents\Event
      */
     public function notifyUser(string $id)
     {
         $this->validate([
             'message' => 'required|string'
         ]);
+
+        $user = User::find($id)->get();
+        if(!$user){
+            return $this->dispatch('issues:show', 'User not found')->to(NotificationTypes::class);
+        }
         
-        $user = User::find($id);
-        broadcast(new SendNotificationEvent($this->message, $id))->toOthers();
+        (new SendNotification($user, $this->message))->notify();
+
+        return $this->dispatch('success:show', 'Notifications Has been sent')->to(NotificationTypes::class);
     }
 }

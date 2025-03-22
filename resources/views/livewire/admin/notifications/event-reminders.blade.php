@@ -8,7 +8,7 @@
                 wire:model="message" 
                 placeholder="Message"
             />
-            <flux:button wire:click="sendMessages()" icon="bell">Notify All Attendees</flux:button>
+            <flux:button wire:click="notifyAllAttendees()" icon="bell">Notify All Attendees</flux:button>
         </flux:input.group>
         <flux:text class="mt-2">This message can be used to notify seperate user.</flux:text>
     </div>
@@ -34,9 +34,9 @@
                             </flux:modal.trigger>
                         </td>
                         <td class="px-6 py-3">
-                            <span wire:click="notifyUser('{{ $event->user->id }}')" class="cursor-pointer px-3 py-1 text-xs font-semibold text-white rounded-full bg-green-500">
-                                Notify
-                            </span>
+                        <flux:button wire:click="notifyUser('{{ $event->user->id }}')" class="cursor-pointer" icon="bell">Notify</flux:button>
+                            {{-- <span wire:click="notifyUser('{{ $event->user->id }}')" class="">
+                            </span> --}}
                         </td>
                     </tr>
 

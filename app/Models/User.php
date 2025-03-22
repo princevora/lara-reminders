@@ -51,6 +51,8 @@ class User extends Authenticatable
 
     /**
      * Get the user's initials
+     * 
+     * @return string
      */
     public function initials(): string
     {
@@ -63,8 +65,16 @@ class User extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function events()
+    public function events(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Event::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function notifications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Notification::class);
     }
 }
