@@ -31,6 +31,10 @@
                 </flux:navlist>
             @endcan
 
+            @can('receive-notifications')
+                <livewire:users.notifications />
+            @endcan
+
             <flux:spacer />
 
             <flux:navlist variant="outline">
