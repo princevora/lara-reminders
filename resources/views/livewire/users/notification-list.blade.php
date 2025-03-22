@@ -1,4 +1,4 @@
-<div class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-5 space-y-5">
+<div wire:poll.60s class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-5 space-y-5">
     <div class="flex justify-between">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-200">Notifications</h2>
         <flux:button icon="envelope-open" variant="ghost" ></flux:button>

@@ -147,14 +147,4 @@
 
         @fluxScripts
     </body>
-    @if (auth()->guard('web')->check())
-        <script>
-            window.addEventListener('load', () => {
-                const user_id = "{{ auth()->user()->id }}";
-                Echo.private(`send-notification.${user_id}`).listen('SendNotificationEvent', (n) => {
-                    console.log(n);
-                });
-            });
-        </script>
-    @endif
 </html>
