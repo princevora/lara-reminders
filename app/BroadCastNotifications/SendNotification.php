@@ -5,6 +5,8 @@ namespace App\BroadCastNotifications;
 use App\Events\SendNotificationEvent;
 use App\Models\Notification;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use function Pest\Laravel\instance;
 
 class SendNotification
 {
@@ -28,7 +30,7 @@ class SendNotification
      */
     public function __construct($users = [], string $message, $type)
     {
-        $this->users = $users;
+        $this->users = $users instanceof Collection ? $users : collect([$users]);
         $this->message = $message;
         $this->type = $type;
     }

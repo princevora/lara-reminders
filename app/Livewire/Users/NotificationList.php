@@ -47,10 +47,7 @@ class NotificationList extends Component
     {
         $this->user = auth()->guard('web')->user();
         $this->user_id = $this->user->id;
-        $this->notifications = $this->getNotifications();
-        $this->unreadNotifications = $this->notifications
-            ->whereNull('read_at')
-            ->count();
+        $this->updateNotifications();
     }
 
     /**
@@ -60,29 +57,48 @@ class NotificationList extends Component
     #[On('echo-private:send-notification.{user_id},SendNotificationEvent')]
     public function listenForMessage($data)
     {
+        $this->updateNotifications();
+    }
+
+    public function markAsRead($notification_id)
+    {
+        // Mark notifications as read and update them
+        if ((new Notifications($this->user_id))->markAsRead($notification_id)) {
+            $this->updateNotifications();
+
+            // dispatch the event and update notifications for sidebar.
+            $this->dispatch('notifications:update')->to(NotificationsComponent::class);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function markAllAsRead()
+    {
+        // Mark notifications as read and update them
+        if ((new Notifications($this->user_id))->markAllAsRead()) {
+            $this->updateNotifications();
+
+            // dispatch the event and update notifications for sidebar.
+            $this->dispatch('notifications:update')->to(NotificationsComponent::class);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private function updateNotifications()
+    {
         $this->notifications = $this->getNotifications();
+        $this->unreadNotifications = $this->notifications->whereNull('read_at')->count();
     }
 
     /**
      * @return Collection<int, Notification>
      */
-    public function getNotifications()
+    private function getNotifications()
     {
-        return Notification::where('user_id', $this->user_id)->latest()->get();
-    }
-
-    public function markAsRead($notification_id)
-    {
-    }
-
-    public function markAllAsRead()
-    {
-        // Mark notifications as read and update them
-        if((new Notifications($this->user_id))->markAllAsRead()){
-            $this->notifications = $this->getNotifications();
-
-            // dispatch the event and update notifications for sidebar.
-            $this->dispatch('notifications:update')->to(NotificationsComponent::class);
-        }
+        return Notification::where('user_id', $this->user_id)->get();
     }
 }
