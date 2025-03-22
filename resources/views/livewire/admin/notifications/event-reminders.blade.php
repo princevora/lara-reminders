@@ -1,4 +1,18 @@
 <div class="mt-10 max-w-4xl mx-auto">
+    <div class="max-w-sm mx-auto mb-10">
+        {{-- <flux:input size="sm"   /> --}}
+
+        <flux:label badge="Required">Message</flux:label>
+        <flux:input.group class="my-2 ">
+            <flux:input 
+                wire:model="message" 
+                placeholder="Message"
+            />
+            <flux:button wire:click="sendMessages()" icon="bell">Notify All Attendees</flux:button>
+        </flux:input.group>
+        <flux:text class="mt-2">This message can be used to notify seperate user.</flux:text>
+    </div>
+
     <div class="overflow-x-auto shadow-lg rounded-lg">
         <table class="w-full rounded-lg text-gray-200">
             <thead class="bg-gray-900 text-gray-300">

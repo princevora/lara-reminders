@@ -16,6 +16,11 @@ class EventReminders extends Component
     use WithPagination; 
 
     /**
+     * @var string
+     */
+    public string $message;
+
+    /**
      * @return \Illuminate\Contracts\View\View
      */
     public function render()
@@ -31,7 +36,11 @@ class EventReminders extends Component
      */
     public function notifyUser(string $id)
     {
+        $this->validate([
+            'message' => 'required|string'
+        ]);
+        
         $user = User::find($id);
-        broadcast(new SendNotificationEvent('helooo', $id))->toOthers();
+        broadcast(new SendNotificationEvent($this->message, $id))->toOthers();
     }
 }
