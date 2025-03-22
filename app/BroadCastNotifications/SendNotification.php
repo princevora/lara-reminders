@@ -19,12 +19,18 @@ class SendNotification
     public string $message = '';
 
     /**
+     * @var string $type
+     */
+    public string $type;
+
+    /**
      * @param mixed $users
      */
-    public function __construct($users = [], string $message)
+    public function __construct($users = [], string $message, $type)
     {
         $this->users = $users;
         $this->message = $message;
+        $this->type = $type;
     }
 
     /**
@@ -41,6 +47,7 @@ class SendNotification
             Notification::create([
                 'user_id' => $user->id,
                 'message' => $this->message,
+                'type' => $this->type,
                 'read_at' => null
             ]);
 

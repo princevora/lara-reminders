@@ -42,12 +42,12 @@ class EventReminders extends Component
             'message' => 'required|string'
         ]);
 
-        $user = User::find($id)->get();
+        $user = User::where('id', $id)->get();
         if(!$user){
             return $this->dispatch('issues:show', 'User not found')->to(NotificationTypes::class);
         }
         
-        (new SendNotification($user, $this->message))->notify();
+        (new SendNotification($user, $this->message, $type = "event_reminder"))->notify();
 
         return $this->dispatch('success:show', 'Notifications Has been sent')->to(NotificationTypes::class);
     }

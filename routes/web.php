@@ -4,6 +4,7 @@ use App\Livewire\Admin\Notifications\NotificationTypes;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
+use App\Livewire\Users\NotificationList;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -13,6 +14,10 @@ Route::get('/', function () {
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+Route::prefix('u')->name('user.')->middleware(['auth', 'verified'])->group(function(){
+    Route::get('notifications', NotificationList::class)->name('notifications');
+});
 
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'verified'])->group(function(){
     Route::view('dashboard', 'admin-dashboard')->name('dashboard');

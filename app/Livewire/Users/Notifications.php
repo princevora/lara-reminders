@@ -41,7 +41,7 @@ class Notifications extends Component
     public function listenForMessage($data)
     {
         $this->notifications = $this->getNotifications();
-        $this->unreadNotifications++;
+        $this->unreadNotifications = $this->notifications->whereNull('read_at')->count();
     }
 
     /**

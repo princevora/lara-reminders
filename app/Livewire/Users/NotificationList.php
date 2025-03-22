@@ -1,43 +1,63 @@
 <?php
 
-namespace App\Http\Livewire\Users;
+namespace App\Livewire\Users;
 
+use App\Models\Notification;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class NotificationList extends Component
 {
-    public $notifications = [];
+    /**
+     * @var Collection $notifications
+     */
+    public Collection $notifications;
 
+    /**
+     * @var array<string, string>
+     */
+    public array $notifications_types = [
+        'event_reminder' => 'calendar-days',
+        'new_venue_request' => 'plus',
+        'system_notifications' => 'computer-desktop'
+    ];
+
+    /**
+     * @var $user
+     */
+    public $user;
+
+    /**
+     * @var $user_id
+     */
+    public $user_id;
+
+    /**
+     * @return void
+     */
     public function mount()
     {
-        // Static notifications
-        $this->notifications = [
-            [
-                'icon' => 'bell',
-                'title' => 'System Update',
-                'message' => 'A system update is scheduled for this weekend.',
-                'link' => '#',
-                'time' => 'Just now',
-            ],
-            [
-                'icon' => 'alert-triangle',
-                'title' => 'Security Alert',
-                'message' => 'Unusual login attempt detected from a new device.',
-                'link' => '#',
-                'time' => '10 min ago',
-            ],
-            [
-                'icon' => 'cloud',
-                'title' => 'Server Maintenance',
-                'message' => 'Servers will be down for maintenance from 2 AM - 5 AM UTC.',
-                'link' => '#',
-                'time' => '1 hour ago',
-            ],
-        ];
+        $this->user = auth()->guard('web')->user();
+        $this->user_id = $this->user->id;
+        $this->notifications = $this->getNotifications();
     }
 
-    public function render()
+    /**
+     * @param mixed $data
+     * @return void
+     */
+    #[On('echo-private:send-notification.{user_id},SendNotificationEvent')]
+    public function listenForMessage($data)
     {
-        return view('livewire.users.notification-list');
+        $this->notifications = $this->getNotifications();
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications()
+    {
+        return Notification::where('user_id', $this->user_id)->latest()->get();
     }
 }
