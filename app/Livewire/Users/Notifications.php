@@ -10,9 +10,9 @@ use Livewire\Component;
 class Notifications extends Component
 {
     /**
-     * @var string
+     * @var mixed
      */
-    public string $user_id;
+    public $user_id;
 
     /**
      * @var Collection $notifications
@@ -33,6 +33,13 @@ class Notifications extends Component
     {
         $this->user_id = auth()->user()->id;
         $this->user = auth()->guard('web')->user();
+
+        // Initialize the notifications and the unread notifications
+        $this->updateNotifications();
+    }
+
+    private function updateNotifications()
+    {
         $this->notifications = $this->getNotifications();
         $this->unreadNotifications = $this->notifications->whereNull('read_at')->count();
     }
@@ -47,8 +54,14 @@ class Notifications extends Component
     /**
      * @return Collection<int, Notification>
      */
-    public function getNotifications(): Collection
+    private function getNotifications(): Collection
     {
         return Notification::where('user_id', $this->user->id)->get();
+    }
+
+    #[On('notifications:update')]
+    public function listenForUpdatedNotifications()
+    {
+        $this->updateNotifications();
     }
 }

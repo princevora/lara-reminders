@@ -1,7 +1,9 @@
 <div wire:poll.60s class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-5 space-y-5">
     <div class="flex justify-between">
         <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-200">Notifications</h2>
-        <flux:button icon="envelope-open" variant="ghost" ></flux:button>
+        <flux:tooltip content="Mark All as read">
+            <flux:button class="cursor-pointer" wire:click="markAllAsRead" icon="envelope-open" variant="ghost"></flux:button>
+        </flux:tooltip>
     </div>
 
     @foreach ($notifications as $notification)
@@ -14,16 +16,26 @@
                     <flux:icon name="{{ $notifications_types[$notification->type] }}" class="w-5 h-5"></flux:icon>
                 </div>
 
-                <!-- Title -->
-                <h3 @click="expanded = !expanded"
-                    class="text-sm font-medium text-gray-900 dark:text-gray-100 flex-1 cursor-pointer">
-                    {{ Str::ucfirst(Str::replace('_', ' ', $notification->type)) }}
-                </h3>
+                <!-- Title + Mark as Read Button -->
+                <div class="flex-1 flex items-center justify-between">
+                    <h3 @click="expanded = !expanded"
+                        class="text-sm font-medium text-gray-900 dark:text-gray-100 cursor-pointer">
+                        {{ Str::ucfirst(Str::replace('_', ' ', $notification->type)) }}
+                    </h3>
 
-                <!-- Red Dot for Unread Notification -->
-                @if (is_null($notification->read_at))
-                    <span class="absolute -top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                @endif
+                    <!-- Mark as Read Button (Only for Unread Notifications) -->
+                    @if (is_null($notification->read_at))
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                            <flux:tooltip content="Mark As Read">
+                                <flux:button wire:click="markAsRead('{{ $notification->id }}')"
+                                    class="cursor-pointer text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100"
+                                    icon="eye" size="xs" variant="ghost">
+                                </flux:button>
+                            </flux:tooltip>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <!-- Notification Content -->
