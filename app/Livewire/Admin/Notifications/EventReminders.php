@@ -21,6 +21,9 @@ class EventReminders extends Component
      */
     public string $message = "Event Reminder! The upcoming {event} event on {date} dont't forget to join it.. ";
 
+    /**
+     * @var array<string, bool>
+     */
     public $notification_channels = [
         'web_sockets' => true,
         'email' => false,
@@ -74,7 +77,10 @@ class EventReminders extends Component
     private function notifyEmailChannel($user, $event)
     {
         try {
-            Mail::to($user->email)->send(new EventReminderMail($event, $user));
+            (new SendNotification($user))->notifyEmailChannel(mailClass: EventReminderMail::class, params: [
+                $user,
+                $event
+            ]);
 
             $this->dispatch('success:show', 'Email Notifications Has been sent')->to(NotificationTypes::class);
 
@@ -150,7 +156,10 @@ class EventReminders extends Component
     private function notifyAllEmailChannel($user, $event)
     {
         try {
-            Mail::to($user->email)->send(new EventReminderMail($event, $user));
+            (new SendNotification($user))->notifyEmailChannel(mailClass: EventReminderMail::class, params: [
+                $user,
+                $event
+            ]);
 
             $this->dispatch('success:show', 'Email Notifications Has been sent')->to(NotificationTypes::class);
 

@@ -17,7 +17,7 @@
             </flux:radio.group>
         </div>
 
-        @if ($selected == 1)
+        @if (!is_null($selected))
             {!! Livewire\Livewire::mount($components[$selected]) !!}
         @endif
     </div>

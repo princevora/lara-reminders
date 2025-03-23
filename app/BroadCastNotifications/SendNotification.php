@@ -3,9 +3,11 @@
 namespace App\BroadCastNotifications;
 
 use App\Events\SendNotificationEvent;
+use App\Mail\EventReminderMail;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 use function Pest\Laravel\instance;
 
 class SendNotification
@@ -23,12 +25,12 @@ class SendNotification
     /**
      * @var string $type
      */
-    public string $type;
+    public ?string $type;
 
     /**
      * @param mixed $users
      */
-    public function __construct($users = [], string $message, $type)
+    public function __construct($users = [], string $message = "", $type = null)
     {
         $this->users = $users instanceof Collection ? $users : collect([$users]);
         $this->message = $message;
@@ -57,5 +59,10 @@ class SendNotification
         }
         
         return true;
+    }
+
+    public function notifyEmailChannel($mailClass, array $params = [])
+    {
+        Mail::to($this->users->first()->email)->send(new $mailClass(...$params));
     }
 }

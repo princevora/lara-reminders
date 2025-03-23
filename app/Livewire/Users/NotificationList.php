@@ -99,6 +99,6 @@ class NotificationList extends Component
      */
     private function getNotifications()
     {
-        return Notification::where('user_id', $this->user_id)->get();
+        return Notification::where('user_id', $this->user_id)->latest()->get();
     }
 }

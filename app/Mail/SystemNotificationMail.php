@@ -9,27 +9,27 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EventReminderMail extends Mailable
+class SystemNotificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
-     * @var $event 
+     * @var string $updateMessage
      */
-    public $event;
-
+    public string $updateMessage;
+    
     /**
-     * @var $user 
+     * @var $user
      */
     public $user;
-    
+
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $event )
+    public function __construct($user, $updateMessage)
     {
         $this->user = $user;
-        $this->event = $event;
+        $this->updateMessage = $updateMessage;
     }
 
     /**
@@ -38,7 +38,7 @@ class EventReminderMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Event Reminder Mail',
+            subject: 'System Notification Mail',
         );
     }
 
@@ -48,9 +48,9 @@ class EventReminderMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.event-reminder-mail',
+            view: 'mail.system-notification-mail',
             with: [
-                'event' => $this->event,
+                'updateMessage' => $this->updateMessage,
                 'user' => $this->user
             ]
         );
