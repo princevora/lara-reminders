@@ -25,9 +25,16 @@
                         New Venue Request
                     </h3>
 
+                    <!-- Mark as Read Button (Only for Unread Notifications) -->
                     @if (is_null($request->read_at))
                         <div class="flex items-center space-x-2">
                             <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                            <flux:tooltip content="Mark As Read">
+                                <flux:button wire:click="markAsRead('{{ $request->id }}')"
+                                    class="cursor-pointer text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100"
+                                    icon="eye" size="xs" variant="ghost">
+                                </flux:button>
+                            </flux:tooltip>
                         </div>
                     @endif
                 </div>

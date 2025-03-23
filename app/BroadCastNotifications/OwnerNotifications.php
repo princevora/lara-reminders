@@ -31,4 +31,19 @@ class OwnerNotifications
             'read_at' => now()
         ]);
     }
+
+    /**
+     * @return bool
+     */
+    public function marRequestAsRead($request_id)
+    {
+        // Find venue requests of the owner
+        return VenueRequest::whereHas('venue', function($query) {
+            $query->where('owner_id', $this->owner->id);
+        })
+        ->where('id', $request_id)
+        ->update([
+            'read_at' => now()
+        ]);
+    }
 }

@@ -90,4 +90,12 @@ class Requests extends Component
 
         $this->updateRequests();
     }
+
+    public function markAsRead($request_id)
+    {
+        // mark all as read..
+        (new OwnerNotifications($this->owner))->marRequestAsRead($request_id);
+
+        $this->updateRequests();
+    }
 }
