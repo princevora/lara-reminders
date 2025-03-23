@@ -248,7 +248,7 @@ class NotificationsController extends Controller
             return $this->emailChannelForSystemNotifications();
         }
     }
-    
+
     /**
      * @return mixed|\Illuminate\Http\JsonResponse
      */
@@ -306,6 +306,11 @@ class NotificationsController extends Controller
         }
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $user_id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function retriveNotifications(Request $request, $user_id)
     {
         // find user
@@ -314,5 +319,20 @@ class NotificationsController extends Controller
         return response()->json([
             'data' => Notification::where('user_id', $user_id)->latest()->get()
         ], options: JSON_PRETTY_PRINT);
+    }
+
+    public function markAsRead(Request $request, $notification_id)
+    {
+        $notification = Notification::where('_id', $notification_id)->firstOrFail();
+
+        if (is_null($notification->read_at)) {
+            $notification->update([
+                'read_at' => now()
+            ]);
+        }
+
+        return response()->json([
+            'response' => 'Marked As Read'
+        ], JSON_PRETTY_PRINT); // ✅ Correct syntax
     }
 }
