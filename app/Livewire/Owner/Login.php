@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Owner;
 
+use App\Models\Owner;
+use Hash;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -44,7 +46,7 @@ class Login extends Component
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $this->redirectIntended(default: route('admin.dashboard', absolute: false), navigate: true);
+        $this->redirectIntended(default: route('owner.dashboard', absolute: false), navigate: true);
     }
 
     /**

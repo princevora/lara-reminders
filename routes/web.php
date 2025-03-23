@@ -5,6 +5,7 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Users\NotificationList;
+use App\Livewire\Users\SendVenueRequest;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -15,11 +16,18 @@ Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::prefix('u')->name('user.')->middleware(['auth', 'verified'])->group(function(){
+Route::prefix('u')->name('user.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('notifications', NotificationList::class)->name('notifications');
+    Route::get('send-venue-request', SendVenueRequest::class)->name('send-venue-request');
 });
 
-Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'verified'])->group(function(){
+Route::prefix('owner')->name('owner.')->middleware(['auth:owner', 'verified'])->group(function () {
+    Route::view('dashboard', 'owner-dashboard')->name('dashboard');
+    // Route::get('notifications', NotificationList::class)->name('notifications');
+    // Route::get('send-venue-request', SendVenueRequest::class)->name('send-venue-request');
+});
+
+Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'verified'])->group(function () {
     Route::view('dashboard', 'admin-dashboard')->name('dashboard');
     Route::get('notifications', NotificationTypes::class)->name('dashboard');
 });
@@ -32,4 +40,4 @@ Route::middleware(['auth:web,admin,owner'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -78,8 +78,8 @@ return [
         ],
 
         'owners' => [
-            'driver' => 'database',
-            'table' => App\Models\Owner::class,
+            'driver' => 'eloquent',
+            'model' => App\Models\Owner::class,
         ],
     ],
 

@@ -30,9 +30,17 @@
                     </flux:navlist.group>
                 </flux:navlist>
             @endcan
-
+            
             @can('receive-notifications')
-                <livewire:users.notifications />
+            <livewire:users.notifications />
+            @endcan
+            
+            @can('send-venue-request')
+                <flux:navlist variant="outline">
+                    <flux:navlist.group :heading="__('Venue')" class="grid">
+                        <flux:navlist.item icon="numbered-list" :href="route('user.send-venue-request')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Send Venue Request') }}</flux:navlist.item>
+                    </flux:navlist.group>
+                </flux:navlist>
             @endcan
 
             <flux:spacer />

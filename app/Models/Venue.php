@@ -18,4 +18,13 @@ class Venue extends Model
     {
         return $this->belongsTo(Owner::class);
     }
+
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function requests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(VenueRequest::class);
+    }
 }

@@ -5,6 +5,7 @@ use App\Livewire\Auth\ConfirmPassword;
 use App\Livewire\Auth\ForgotPassword;
 use App\Livewire\Auth\Login;
 use App\Livewire\Admin\Auth\Login as AdminLogin;
+use App\Livewire\Owner\Login as OwnerLogin;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Auth\VerifyEmail;
@@ -22,7 +23,7 @@ Route::middleware(['guest:admin'])->group(function () {
 });
 
 Route::middleware(['guest:owner'])->group(function () {
-    Route::get('owner/login', AdminLogin::class)->name('admin.auth.login');
+    Route::get('owner/login', OwnerLogin::class)->name('admin.auth.login');
 });
 
 Route::middleware('auth')->group(function () {
