@@ -21,6 +21,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('access-notification-types', fn () => self::getAdminAccess());
+        Gate::define('have-access-token', fn () => self::getAdminAccess());
         Gate::define('receive-notifications', fn() => auth()->guard('web')->check());
         Gate::define('send-venue-request', fn() => auth()->guard('web')->check());
         Gate::define('view-venue-request', fn() => auth()->guard('owner')->check());

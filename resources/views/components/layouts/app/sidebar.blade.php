@@ -54,6 +54,14 @@
             <flux:spacer />
 
             <flux:navlist variant="outline">
+                @can('have-access-token')
+                <flux:dropdown class="mx-auto">
+                    <flux:button icon:trailing="chevron-down">Api Token</flux:button>
+                    <flux:menu>
+                        <flux:input icon="key" value="{{ auth()->guard('admin')->user()?->api_token }}" readonly copyable />
+                    </flux:menu>
+                </flux:dropdown>
+                @endcan
                 <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
                 {{ __('Repository') }}
                 </flux:navlist.item>
