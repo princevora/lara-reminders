@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\Admin\Notifications;
 
 use App\BroadCastNotifications\SendNotification;
+use App\BroadCastNotifications\SendVenueRequest;
 use App\Http\Controllers\Controller;
 use App\Mail\EventReminderMail;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Venue;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -32,8 +34,8 @@ class NotificationsController extends Controller
         'new_venue_request' => [
             'icon' => 'plus',
             'required' => [
-                'user_id',
-                'venue_id'
+                'user_id' => 'required|exists:users,id',
+                'venue_id' => 'required|exists:venues,id',
             ],
             'handler' => 'newVenueRequestNotification'
         ],
@@ -77,14 +79,19 @@ class NotificationsController extends Controller
     private $event;
     
     /**
+     * @var $venue 
+     */
+    private $venue;
+
+    /**
      * @param \Illuminate\Http\Request $request
      * @return mixed
      */
     public function sendNotification(Request $request)
     {
         $typesValidator = Validator::make($request->all(), [
-                'notification_type' => 'required|string|in:' . implode(',', array_keys($this->notifications_types)),
-                'notification_channel' => 'required|string|in:' . implode(',', $this->notification_channels),
+            'notification_type' => 'required|string|in:' . implode(',', array_keys($this->notifications_types)),
+            'notification_channel' => 'required|string|in:' . implode(',', $this->notification_channels),
         ]);
 
         if($typesValidator->fails()){
@@ -142,6 +149,11 @@ class NotificationsController extends Controller
                 'status' => 200,
                 'message' => 'Notification Sent Successfully'
             ], options: JSON_PRETTY_PRINT);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Unable to send notification'
+            ],400, options: JSON_PRETTY_PRINT);
         }
     }
 
@@ -167,5 +179,55 @@ class NotificationsController extends Controller
                 'message' => 'Unable to sent Email Notification'
             ], 400, options: JSON_PRETTY_PRINT);
         }
+    }
+
+    private function newVenueRequestNotification()
+    {
+        $this->user = User::findOrFail($this->request->user_id);
+        $this->venue = Venue::findOrFail($this->request->venue_id);
+
+        if($this->notification_channel == 'web_sockets'){
+            return $this->webHookChannelForNewVenueRequest();
+        } else if($this->notification_channel == 'email') {
+            return $this->emailChannelForNewVenueRequest();
+        }
+    }
+
+    /**
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    private function webHookChannelForNewVenueRequest()
+    {
+        if((new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notify()){
+            return response()->json([
+                'status' => 200,
+                'messae' => 'New Venue Booking Request Has been sent...'
+            ], options: JSON_PRETTY_PRINT);
+        } else {
+            return response()->json([
+                'status' => 400,
+                'messae' => 'Unable to send New Venue Booking Request'
+            ], options: JSON_PRETTY_PRINT);
+        }
+    }
+
+    /**
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    private function emailChannelForNewVenueRequest()
+    {
+        try {
+            (new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notifyEmailChannel();
+            
+            return response()->json([
+                'status' => 200,
+                'message' => 'Venue Request Has been sent..'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Unable to send the email'
+            ], 400);
+        }   
     }
 }

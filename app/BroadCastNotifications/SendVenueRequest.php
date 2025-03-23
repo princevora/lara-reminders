@@ -42,24 +42,33 @@ class SendVenueRequest
         $this->user = $user;
     }
 
+    /**
+     * @return bool
+     */
     public function notify()
     {
-        $message = str_replace([
-            '{owner}', 
-            '{venue_name}'
-        ], [
-            $this->venue->owner->name,
-            $this->venue->name 
-        ], $this->message);
+        try {
+            $message = str_replace([
+                '{owner}', 
+                '{venue_name}'
+            ], [
+                $this->venue->owner->name,
+                $this->venue->name 
+            ], $this->message);
+    
+            VenueRequest::create([
+                'user_id' => $this->user->id,
+                'venue_id' => $this->venue->id,
+                'message' => $message,
+                'read_at' => null
+            ]);
+    
+            broadcast(new SendVenueRequestEvent($this->owner))->toOthers();
 
-        VenueRequest::create([
-            'user_id' => $this->user->id,
-            'venue_id' => $this->venue->id,
-            'message' => $message,
-            'read_at' => null
-        ]);
-
-        broadcast(new SendVenueRequestEvent($this->owner))->toOthers();
+            return true;
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 
     /**
