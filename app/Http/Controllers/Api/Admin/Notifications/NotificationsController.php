@@ -6,6 +6,7 @@ use App\BroadCastNotifications\SendNotification;
 use App\BroadCastNotifications\SendVenueRequest;
 use App\Http\Controllers\Controller;
 use App\Mail\EventReminderMail;
+use App\Mail\SystemNotificationMail;
 use App\Models\Event;
 use App\Models\User;
 use App\Models\Venue;
@@ -234,13 +235,22 @@ class NotificationsController extends Controller
         }
     }
 
+    /**
+     * @return ?\Illuminate\Http\JsonResponse
+     */
     private function systemNotification()
     {
         if ($this->notification_channel == 'web_sockets') {
             return $this->webSocketChannelForSystemNotifications();
         }
+        if ($this->notification_channel == 'email') {
+            return $this->emailChannelForSystemNotifications();
+        }
     }
-
+    
+    /**
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     private function webSocketChannelForSystemNotifications()
     {
         $users = User::all();
@@ -259,5 +269,40 @@ class NotificationsController extends Controller
             'status' => 200,
             'message' => 'Notifications has been sent'
         ]);
+    }
+
+    /**
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
+    private function emailChannelForSystemNotifications()
+    {
+        $users = User::all();
+
+        $message = "Update! Our System Has Just Brought A New Feature";
+
+        if ($this->request->has('message')) {
+            $message = $this->request->message;
+        }
+
+        try {
+            foreach ($users as $user) {
+                // BroadCast the message
+                (new SendNotification($user, $message))->notifyEmailChannel(SystemNotificationMail::class, [
+                    $user,
+                    $message
+                ]);
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Notifications has been sent'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'Unable to send notifications'
+            ], 400);
+        }
+
     }
 }
