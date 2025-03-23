@@ -3,7 +3,9 @@
 namespace App\BroadCastNotifications;
 
 use App\Events\SendVenueRequestEvent;
+use App\Mail\VenueBookingRequest;
 use App\Models\VenueRequest;
+use Mail;
 
 class SendVenueRequest
 {
@@ -58,5 +60,17 @@ class SendVenueRequest
         ]);
 
         broadcast(new SendVenueRequestEvent($this->owner))->toOthers();
+    }
+
+    /**
+     * @return \Illuminate\Mail\SentMessage|null
+     */
+    public function notifyEmailChannel()
+    {
+        Mail::to($this->owner->email)->send(new VenueBookingRequest(
+            $this->owner, 
+            $this->user, 
+            $this->venue
+        ));
     }
 }

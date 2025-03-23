@@ -1,4 +1,30 @@
 <div class="container mx-auto p-6">
+    @if ($errors->any())
+        <div class="mad-w-md">
+            @foreach ($errors->all() as $error)
+                <flux:callout variant="danger" inline x-data="{ visible: true }" x-show="visible">
+                    <flux:callout.heading class="flex gap-2 @max-md:flex-col items-start">Error! <flux:text> {{ $error }}
+                        </flux:text>
+                    </flux:callout.heading>
+
+                    <x-slot name="controls">
+                        <flux:button icon="x-mark" variant="ghost" x-on:click="visible = false" />
+                    </x-slot>
+                </flux:callout>
+            @endforeach
+        </div>
+    @endif
+    <div class="flex items-center justify-center ">
+        <div class="max-w-lg p-6 rounded-lg">
+            <flux:label badge="Notification Channel"></flux:label>
+            <div class="flex gap-4 *:gap-x-2 mt-5">
+                <flux:checkbox wire:model="notification_channels.web_sockets" value="english" label="WebSockets" />
+                <flux:checkbox wire:model="notification_channels.email" value="spanish" label="Email" />
+                {{-- <flux:checkbox wire:model="notification_channels.push" value="german" label="Push Notifications" /> --}}
+            </div>
+        </div>
+    </div>
+
     @if (!is_null($response_message) && !is_null($message_type))
         <div class="my-4">
             <flux:callout variant="{{ $message_type == 0 ? 'danger' : 'success' }}" icon="check-circle"

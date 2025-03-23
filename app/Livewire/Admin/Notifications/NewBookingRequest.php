@@ -39,6 +39,15 @@ class NewBookingRequest extends Component
     public ?int $message_type = null;
 
     /**
+     * @var array<string, bool>
+     */
+    public $notification_channels = [
+        'web_sockets' => true,
+        'email' => false,
+        // 'push' => false
+    ];
+
+    /**
      * @return void
      */
     public function mount()
@@ -73,11 +82,24 @@ class NewBookingRequest extends Component
      */
     public function sendVenueRequest()
     {
+        if (empty(array_filter($this->notification_channels))) {
+            throw ValidationException::withMessages(['form_message' => 'Select Atleat One Channel']);
+        }
+
         if (is_null($this->venue) || is_null($this->user)) {
             throw ValidationException::withMessages(['form_message' => 'User And Venue Must be selected']);
         }
-
-        (new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notify();
+        
+        if($this->notification_channels['web_sockets']){
+            (new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notify();
+        }
+        if($this->notification_channels['email']){
+            try {
+                (new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notifyEmailChannel();
+            } catch (\Throwable $th) {
+                throw ValidationException::withMessages(['form_message' => 'Unable to send the email']);
+            }
+        }
 
         $this->response_message = "Reuqest Has been sent";
         $this->message_type = 1;

@@ -10,10 +10,10 @@
                 value="spanish" 
                 label="Email" 
             />
-            <flux:checkbox wire:model="notification_channels.push" 
+            {{-- <flux:checkbox wire:model="notification_channels.push" 
                 value="german" 
                 label="Push Notifications" 
-            />
+            /> --}}
         </div>
         <flux:input.group class="my-4">
             <flux:button class="mx-auto cursor-pointer" wire:click="notifyAll()" icon="bell">Notify All Attendees

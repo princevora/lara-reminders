@@ -1,5 +1,5 @@
 <div class="">
-    @if (!empty($message))
+    @if (!empty($message) && !is_null($messageType))
         <div class="max-w-md mx-auto m-5">
             <flux:callout variant="{{ $messageType === 0 ? 'danger' : 'success' }}" icon="x-circle" heading="{{ $message }}" />
         </div>
