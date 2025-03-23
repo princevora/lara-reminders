@@ -24,7 +24,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'verified'])->
     Route::get('notifications', NotificationTypes::class)->name('dashboard');
 });
 
-Route::middleware(['auth:web,admin'])->group(function () {
+Route::middleware(['auth:web,admin,owner'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
     Route::get('settings/profile', Profile::class)->name('settings.profile');

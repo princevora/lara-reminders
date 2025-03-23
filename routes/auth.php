@@ -18,7 +18,11 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware(['guest:admin'])->group(function () {
-    Route::get('admin/auth/login', AdminLogin::class)->name('admin.auth.login');
+    Route::get('admin/login', AdminLogin::class)->name('admin.auth.login');
+});
+
+Route::middleware(['guest:owner'])->group(function () {
+    Route::get('owner/login', AdminLogin::class)->name('admin.auth.login');
 });
 
 Route::middleware('auth')->group(function () {
