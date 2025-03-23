@@ -34,4 +34,19 @@ class Logout
 
         return redirect('/');
     }
+
+    /**
+     * Logouts the admin
+     * 
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logoutOwner()
+    {
+        Auth::guard('owner')->logout();
+
+        Session::invalidate();
+        Session::regenerateToken();
+
+        return redirect('/');
+    }
 }

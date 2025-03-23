@@ -1,7 +1,14 @@
 @php
-    $isAdmin = auth()->guard('admin')->check();
-    $logOutRoute = $isAdmin ? 'admin.auth.logout' : 'logout';
-    $dashboadRoute = $isAdmin ? 'admin.dashboard' : 'dashboard';
+    $logOutRoute = 'logout';
+    $dashboadRoute = 'dashboard';
+
+    if(auth()->guard('admin')->check()){
+        $logOutRoute = 'admin.auth.logout';
+        $dashboadRoute = 'admin.dashboard';
+    } else if(auth()->guard('owner')->check()){
+        $logOutRoute = 'owner.auth.logout';
+        $dashboadRoute = 'owner.dashboard';
+    }
 @endphp
 
 <!DOCTYPE html>

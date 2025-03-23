@@ -181,6 +181,9 @@ class NotificationsController extends Controller
         }
     }
 
+    /**
+     * @return ?\Illuminate\Http\JsonResponse
+     */
     private function newVenueRequestNotification()
     {
         $this->user = User::findOrFail($this->request->user_id);
@@ -194,7 +197,7 @@ class NotificationsController extends Controller
     }
 
     /**
-     * @return mixed|\Illuminate\Http\JsonResponse
+     * @return ?\Illuminate\Http\JsonResponse
      */
     private function webHookChannelForNewVenueRequest()
     {
@@ -229,5 +232,26 @@ class NotificationsController extends Controller
                 'message' => 'Unable to send the email'
             ], 400);
         }   
+    }
+
+    private function systemNotification()
+    {
+        
+    }
+
+    private function webHookChannelForSystemNotifications()
+    {
+        $users = User::all();
+        $message = "Update! Our System Has Just Brought A New Feature";
+
+        if($this->request->has('message')){
+            $message = $this->request->message;
+        }
+
+
+        foreach ($users as $user) {
+            // BroadCast the message
+            (new SendNotification($user, $message, $type = "system_notifications"))->notify();
+        }
     }
 }

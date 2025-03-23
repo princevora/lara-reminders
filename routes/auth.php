@@ -43,3 +43,6 @@ Route::post('logout', App\Livewire\Actions\Logout::class)
 
 Route::post('admin/auth/logout', [App\Livewire\Actions\Logout::class, 'logoutAdmin'])
     ->name('admin.auth.logout');
+
+Route::post('owner/auth/logout', [App\Livewire\Actions\Logout::class, 'logoutOwner'])
+    ->name('owner.auth.logout');
