@@ -42,9 +42,10 @@ Route::middleware(['auth:web,admin,owner'])->group(function () {
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
 });
 
-Route::prefix('api')->name('api.')->middleware(AdminApiMiddleware::class)->group(function(){
+Route::prefix('api')->name('api.')->group(function(){
     Route::prefix('notifications')->name('notifications.')->group(function(){
-        Route::post('send', [NotificationsController::class, 'sendNotification'])->name('send');
+        Route::post('send', [NotificationsController::class, 'sendNotification'])->name('send')->middleware(AdminApiMiddleware::class);
+        Route::get('{user_id}', [NotificationsController::class, 'retriveNotifications'])->name('retrive');
     });
 });
 

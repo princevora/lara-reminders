@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\EventReminderMail;
 use App\Mail\SystemNotificationMail;
 use App\Models\Event;
+use App\Models\Notification;
 use App\Models\User;
 use App\Models\Venue;
 use Carbon\Carbon;
@@ -303,6 +304,15 @@ class NotificationsController extends Controller
                 'message' => 'Unable to send notifications'
             ], 400);
         }
+    }
 
+    public function retriveNotifications(Request $request, $user_id)
+    {
+        // find user
+        User::findOrFail($user_id);
+
+        return response()->json([
+            'data' => Notification::where('user_id', $user_id)->latest()->get()
+        ], options: JSON_PRETTY_PRINT);
     }
 }
