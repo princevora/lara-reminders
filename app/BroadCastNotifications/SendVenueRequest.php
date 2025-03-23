@@ -12,10 +12,10 @@ class SendVenueRequest
      */
     public $owner;
 
-    /**
-     * @var string $message
+     /**
+     * @var string $message 
      */
-    public string $message;
+    public string $message = "Hello {owner}! I want to request for the {venue_name} Venue";
 
     /**
      * @var $venue 
@@ -33,20 +33,27 @@ class SendVenueRequest
      * @param mixed $message
      * @param mixed $user
      */
-    public function __construct($owner, $venue, $user, $message)
+    public function __construct($owner, $venue, $user)
     {
         $this->owner = $owner;
-        $this->message = $message;
         $this->venue = $venue;
         $this->user = $user;
     }
 
     public function notify()
     {
+        $message = str_replace([
+            '{owner}', 
+            '{venue_name}'
+        ], [
+            $this->venue->owner->name,
+            $this->venue->name 
+        ], $this->message);
+
         VenueRequest::create([
             'user_id' => $this->user->id,
             'venue_id' => $this->venue->id,
-            'message' => $this->message,
+            'message' => $message,
             'read_at' => null
         ]);
 

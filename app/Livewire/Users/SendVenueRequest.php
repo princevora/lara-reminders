@@ -12,11 +12,6 @@ class SendVenueRequest extends Component
      * @var $venues 
      */
     public $venues;
-    
-    /**
-     * @var string $message 
-     */
-    private string $message = "Hello {owner}! I want to request for the {venue_name} Venue";
 
     /**
      * @var $user 
@@ -49,16 +44,9 @@ class SendVenueRequest extends Component
     public function requestVenue($id)
     {
         $venue = Venue::find($id);
-        $message = str_replace([
-            '{owner}', 
-            '{venue_name}'
-        ], [
-            $venue->owner->name,
-            $venue->name 
-        ], $this->message);
 
         if($venue){
-            (new SendVenueRequestBroadcaster($venue->owner, $venue, $this->user, $message))->notify();
+            (new SendVenueRequestBroadcaster($venue->owner, $venue, $this->user))->notify();
      
             $this->response_message = "Reuqest Has been sent";
             $this->message_type = 1;
