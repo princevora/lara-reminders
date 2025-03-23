@@ -54,6 +54,14 @@ class Login extends Component
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
+        $admin = Admin::where('email', $this->email)->first();
+
+        // If admin already has a token, return the same token
+        if (!$admin->api_token) {
+            $admin->api_token = bin2hex(random_bytes(40)); // Generate token only if it's null
+            $admin->save();
+        }
+
         $this->redirectIntended(default: route('admin.dashboard', absolute: false), navigate: true);
     }
 
