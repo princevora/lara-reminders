@@ -74,7 +74,7 @@
                             <td class="px-6 py-3">{{ Str::limit($venue->name, 40) }}</td>
                             <td class="px-6 py-3">
                                 <flux:button class="cursor-pointer" wire:click="selectVenue('{{ $venue->id }}')">
-                                    Select For</flux:button>
+                                    Select As</flux:button>
                             </td>
                         </tr>
                     @endforeach

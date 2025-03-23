@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\User;
+use Hash;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -15,7 +17,7 @@ use Livewire\Component;
 #[Layout('components.layouts.auth')]
 class Login extends Component
 {
-    #[Validate('required|string|email')]
+    #[Validate('required|string|email|exists:users,email')]
     public string $email = '';
 
     #[Validate('required|string')]
@@ -31,6 +33,14 @@ class Login extends Component
         $this->validate();
 
         $this->ensureIsNotRateLimited();
+
+        $user = User::where('email', $this->email)->first();
+
+        if(!$user || !Hash::check($this->password, $user->password)){
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
 
         if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());

@@ -34,6 +34,14 @@ class Login extends Component
 
         $this->ensureIsNotRateLimited();
 
+        $user = Owner::where('email', $this->email)->first();
+
+        if(!$user || !Hash::check($this->password, $user->password)){
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+
         if (! Auth::guard('owner')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
 
             RateLimiter::hit($this->throttleKey());
