@@ -12,7 +12,7 @@ class NotificationTypes extends Component
     /**
      * @var int $selected
      */
-    public $selected = 2;
+    public $selected = 1;
 
     /**
      * @var string $message
