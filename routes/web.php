@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\Notifications\NotificationsController;
+use App\Http\Middleware\AdminApiMiddleware;
 use App\Livewire\Admin\Notifications\NotificationTypes;
 use App\Livewire\Owner\Requests;
 use App\Livewire\Settings\Appearance;
@@ -38,6 +40,12 @@ Route::middleware(['auth:web,admin,owner'])->group(function () {
     Route::get('settings/profile', Profile::class)->name('settings.profile');
     Route::get('settings/password', Password::class)->name('settings.password');
     Route::get('settings/appearance', Appearance::class)->name('settings.appearance');
+});
+
+Route::prefix('api')->name('api.')->middleware(AdminApiMiddleware::class)->group(function(){
+    Route::prefix('notifications')->name('notifications.')->group(function(){
+        Route::post('send', [NotificationsController::class, 'sendNotification'])->name('send');
+    });
 });
 
 require __DIR__ . '/auth.php';
