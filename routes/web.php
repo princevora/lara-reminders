@@ -46,6 +46,7 @@ Route::prefix('api')->name('api.')->group(function(){
     Route::prefix('notifications')->name('notifications.')->group(function(){
         Route::post('send', [NotificationsController::class, 'sendNotification'])->name('send')->middleware(AdminApiMiddleware::class);
         Route::get('{user_id}', [NotificationsController::class, 'retriveNotifications'])->name('retrive');
+        Route::put('mark-as-read/{notification_id}', [NotificationsController::class, 'markAsRead'])->name('mark-as-read');
     });
 });
 

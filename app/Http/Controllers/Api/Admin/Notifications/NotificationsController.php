@@ -328,7 +328,7 @@ class NotificationsController extends Controller
      */
     public function markAsRead(Request $request, $notification_id)
     {
-        $notification = Notification::where('_id', $notification_id)->firstOrFail();
+        $notification = Notification::where('id', $notification_id)->first();
 
         if (is_null($notification->read_at)) {
             $notification->update([
@@ -338,6 +338,6 @@ class NotificationsController extends Controller
 
         return response()->json([
             'response' => 'Marked As Read'
-        ], JSON_PRETTY_PRINT); // ✅ Correct syntax
+        ], options: JSON_PRETTY_PRINT); 
     }
 }
