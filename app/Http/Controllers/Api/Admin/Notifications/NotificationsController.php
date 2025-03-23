@@ -321,6 +321,11 @@ class NotificationsController extends Controller
         ], options: JSON_PRETTY_PRINT);
     }
 
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @param mixed $notification_id
+     * @return mixed|\Illuminate\Http\JsonResponse
+     */
     public function markAsRead(Request $request, $notification_id)
     {
         $notification = Notification::where('_id', $notification_id)->firstOrFail();
