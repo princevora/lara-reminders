@@ -43,6 +43,14 @@
                 </flux:navlist>
             @endcan
 
+            @can('view-venue-request')
+                <flux:navlist variant="outline">
+                    <flux:navlist.group :heading="__('Venue')" class="grid">
+                        <flux:navlist.item icon="numbered-list" :href="route('owner.view-venue-request')" :current="request()->routeIs('owner.view-venue-request')" wire:navigate>{{ __('View Venue Request') }}</flux:navlist.item>
+                    </flux:navlist.group>
+                </flux:navlist>
+            @endcan
+
             <flux:spacer />
 
             <flux:navlist variant="outline">

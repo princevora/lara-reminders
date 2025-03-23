@@ -1,4 +1,11 @@
 <div class="overflow-x-auto shadow-lg rounded-lg">
+    
+    @if (!is_null($response_message) && !is_null($message_type))
+        <div class="my-4">
+            <flux:callout variant="{{ $message_type == 0 ? 'danger' : 'success' }}" icon="check-circle" heading="{{ $response_message }}" />
+        </div>
+    @endif
+
     <table class="w-full rounded-lg text-gray-200">
         <thead class="bg-gray-900 text-gray-300">
             <tr>
@@ -32,4 +39,12 @@
             @endforeach
         </tbody>
     </table>
+    <script>
+        document.addEventListener('clearMessage', () => {
+            setTimeout(() => {
+                @this.set('response_message', ''); 
+                @this.set('message_type', null); 
+            }, 1500);
+        })
+    </script>
 </div>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('venue_id');
+            $table->text('message');
             $table->timestamp('read_at')->nullable()->default(null);
             $table->timestamps();
         });

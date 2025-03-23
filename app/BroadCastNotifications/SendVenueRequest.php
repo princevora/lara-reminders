@@ -35,7 +35,7 @@ class SendVenueRequest
      */
     public function __construct($owner, $venue, $user, $message)
     {
-        $this->users = $owner instanceof Collection ? $owner : collect([$owner]);
+        $this->owner = $owner;
         $this->message = $message;
         $this->venue = $venue;
         $this->user = $user;
@@ -46,6 +46,7 @@ class SendVenueRequest
         VenueRequest::create([
             'user_id' => $this->user->id,
             'venue_id' => $this->venue->id,
+            'message' => $this->message,
             'read_at' => null
         ]);
 

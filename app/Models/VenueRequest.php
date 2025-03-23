@@ -8,8 +8,9 @@ class VenueRequest extends Model
 {
     protected $fillable = [
         'user_id',
-        'owner_id',
-        'read_at'
+        'venue_id',
+        'read_at',
+        'message'
     ];
 
     /**

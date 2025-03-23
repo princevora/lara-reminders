@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Admin\Notifications\NotificationTypes;
+use App\Livewire\Owner\Requests;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
@@ -23,8 +24,7 @@ Route::prefix('u')->name('user.')->middleware(['auth', 'verified'])->group(funct
 
 Route::prefix('owner')->name('owner.')->middleware(['auth:owner', 'verified'])->group(function () {
     Route::view('dashboard', 'owner-dashboard')->name('dashboard');
-    // Route::get('notifications', NotificationList::class)->name('notifications');
-    // Route::get('send-venue-request', SendVenueRequest::class)->name('send-venue-request');
+    Route::get('view-venue-request', Requests::class)->name('view-venue-request');
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['auth:admin', 'verified'])->group(function () {
