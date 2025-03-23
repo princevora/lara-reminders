@@ -240,5 +240,5 @@ admin/dashboard
 
 User and owner has the same notification interface for realtime updates
 
-## Api token access
+## Api token access in admin dashboard
 ![Api access](<Optional And Custom message (2).png>)
