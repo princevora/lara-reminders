@@ -56,7 +56,7 @@ class NotificationsController extends Controller
     /**
      * @var ?string $notification_type
      */
-    private ?string $notification_type; 
+    private ?string $notification_type;
 
     /**
      * @var ?string $notification_channel
@@ -77,7 +77,7 @@ class NotificationsController extends Controller
      * @var $event
      */
     private $event;
-    
+
     /**
      * @var $venue 
      */
@@ -94,29 +94,29 @@ class NotificationsController extends Controller
             'notification_channel' => 'required|string|in:' . implode(',', $this->notification_channels),
         ]);
 
-        if($typesValidator->fails()){
+        if ($typesValidator->fails()) {
             return response()->json($typesValidator->getMessageBag()->toArray(), 400, options: JSON_PRETTY_PRINT);
         }
-        
+
         $this->notification_type = $request->notification_type;
         $this->notification_channel = $request->notification_channel;
-        
+
         // // check if the required parameters of notification type is given..
-        if(isset($this->notifications_types[$this->notification_type]['required'])){
+        if (isset($this->notifications_types[$this->notification_type]['required'])) {
             $rulesValidator = Validator::make($request->all(), $this->notifications_types[$this->notification_type]['required']);
-            
-            if($rulesValidator->fails()){
+
+            if ($rulesValidator->fails()) {
                 return response()->json($rulesValidator->getMessageBag()->toArray(), 400, options: JSON_PRETTY_PRINT);
             }
-
-            $this->request = $request;
-
-            // call the appropriate functions
-            $handler = $this->notifications_types[$this->notification_type]['handler'];
-        
-            // Call the handler
-            return $this->$handler();
         }
+
+        $this->request = $request;
+
+        // call the appropriate functions
+        $handler = $this->notifications_types[$this->notification_type]['handler'];
+
+        // Call the handler
+        return $this->$handler();
     }
 
     /**
@@ -127,9 +127,9 @@ class NotificationsController extends Controller
         $this->user = User::findOrFail($this->request->user_id);
         $this->event = Event::findOrFail($this->request->event_id);
 
-        if($this->notification_channel == 'web_sockets'){
+        if ($this->notification_channel == 'web_sockets') {
             return $this->webSocketsChannelForEventReminder();
-        } else if($this->notification_channel == 'email') {
+        } else if ($this->notification_channel == 'email') {
             return $this->emailChannelForEventReminder();
         }
     }
@@ -144,7 +144,7 @@ class NotificationsController extends Controller
         $message = "Event Reminder! The upcoming {$this->event->title} event on {$date} dont't forget to join it..";
 
         // Send notification
-        if((new SendNotification($this->user, $message, $this->notification_type))->notify()){
+        if ((new SendNotification($this->user, $message, $this->notification_type))->notify()) {
             return response()->json([
                 'status' => 200,
                 'message' => 'Notification Sent Successfully'
@@ -153,7 +153,7 @@ class NotificationsController extends Controller
             return response()->json([
                 'status' => 400,
                 'message' => 'Unable to send notification'
-            ],400, options: JSON_PRETTY_PRINT);
+            ], 400, options: JSON_PRETTY_PRINT);
         }
     }
 
@@ -172,7 +172,7 @@ class NotificationsController extends Controller
                 'status' => 200,
                 'message' => 'Email Notification Sent Successfully'
             ], options: JSON_PRETTY_PRINT);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 400,
@@ -189,9 +189,9 @@ class NotificationsController extends Controller
         $this->user = User::findOrFail($this->request->user_id);
         $this->venue = Venue::findOrFail($this->request->venue_id);
 
-        if($this->notification_channel == 'web_sockets'){
+        if ($this->notification_channel == 'web_sockets') {
             return $this->webHookChannelForNewVenueRequest();
-        } else if($this->notification_channel == 'email') {
+        } else if ($this->notification_channel == 'email') {
             return $this->emailChannelForNewVenueRequest();
         }
     }
@@ -201,7 +201,7 @@ class NotificationsController extends Controller
      */
     private function webHookChannelForNewVenueRequest()
     {
-        if((new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notify()){
+        if ((new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notify()) {
             return response()->json([
                 'status' => 200,
                 'messae' => 'New Venue Booking Request Has been sent...'
@@ -221,7 +221,7 @@ class NotificationsController extends Controller
     {
         try {
             (new SendVenueRequest($this->venue->owner, $this->venue, $this->user))->notifyEmailChannel();
-            
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Venue Request Has been sent..'
@@ -231,27 +231,33 @@ class NotificationsController extends Controller
                 'status' => 400,
                 'message' => 'Unable to send the email'
             ], 400);
-        }   
+        }
     }
 
     private function systemNotification()
     {
-        
+        if ($this->notification_channel == 'web_sockets') {
+            return $this->webSocketChannelForSystemNotifications();
+        }
     }
 
-    private function webHookChannelForSystemNotifications()
+    private function webSocketChannelForSystemNotifications()
     {
         $users = User::all();
         $message = "Update! Our System Has Just Brought A New Feature";
 
-        if($this->request->has('message')){
+        if ($this->request->has('message')) {
             $message = $this->request->message;
         }
-
 
         foreach ($users as $user) {
             // BroadCast the message
             (new SendNotification($user, $message, $type = "system_notifications"))->notify();
         }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Notifications has been sent'
+        ]);
     }
 }
